@@ -1,3 +1,5 @@
+# sistema_vendas
+
 Categoria: Armazena informações sobre as categorias dos produtos disponíveis para venda.
 CategoriaID: Chave primária única para identificar cada categoria.
 Nome: Nome da categoria.
