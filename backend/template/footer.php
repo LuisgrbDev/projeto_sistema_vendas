@@ -1,5 +1,5 @@
-
 <footer>
-       RODAPÉ DA PÁGINA 
-    </footer>
+    RODAPÉ DA PÁGINA
+</footer>
+
 </html>
