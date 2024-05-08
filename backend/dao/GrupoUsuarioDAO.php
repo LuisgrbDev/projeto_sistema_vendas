@@ -16,32 +16,24 @@ class GrupoDAO implements BaseDAO
     public function getById($id)
     {
         try {
-            // Preparar a consulta SQL
-            $sql = "SELECT * FROM grupousuario WHERE Id = :id";
-
-            // Preparar a instrução
+            $sql = "SELECT * FROM GrupoUsuario WHERE Id = :id";
             $stmt = $this->db->prepare($sql);
-
-            // Vincular parâmetros
-            $stmt->bindParam(':id', $id);
-
-            // Executa a instrução
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Obtem o usuario encontrado;
-            $grupo = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($result) {
+                return new GrupoUsuario(
+                    $result['Id'],
+                    $result['Nome'],
+                    $result['Descricao'],
+                    $result['DataCriacao'],
+                    $result['DataAtualizacao'],
+                    $result['Ativo']
+                );
+            }
 
-            // Retorna o usuário encontrado
-            return $grupo ?
-                new Usuario(
-                    $grupo['Id'],
-                    $grupo['Nome'],
-                    $grupo['Descricao'],
-                    $grupo['DataCriacao'],
-                    $grupo['DataAtualizacao'],
-                    $grupo['Ativo']
-                )
-                : null;
+            return null;
         } catch (PDOException $e) {
             return null;
         }
@@ -50,66 +42,51 @@ class GrupoDAO implements BaseDAO
     public function getAll()
     {
         try {
-            // Preparar a consulta SQL
-            $sql = "SELECT * FROM grupousuario";
-
-            // Preparar a instrução
+            $sql = "SELECT * FROM GrupoUsuario WHERE";
             $stmt = $this->db->prepare($sql);
+            $grupos = [];
 
-            // Executar a instrução
-            $stmt->execute();
-
-            // Obter todos os usuários encontrados
-            $grupo = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Retornar os usuários encontrados
-            return array_map(function ($grupo) {
-                return new GrupoUsuario(
-                    $grupo['Id'],
-                    $grupo['Nome'],
-                    $grupo['descricao'],
-                    $grupo['DataCriacao'],
-                    $grupo['DataAtualizacao'],
-                    $grupo['UsuarioAtualizacao'],
-                    $grupo['Ativo']
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $grupos = new GrupoUsuario(
+                    null,
+                    $row['Nome'],
+                    $row['Descricao'],
+                    $row['DataCriacao'],
+                    $row['DataAtualizacao'],
+                    $row['Ativo']
                 );
-            }, $grupo);
+            }
+
+            return $grupos;
         } catch (PDOException $e) {
             return [];
         }
     }
 
 
-    public function create($grupo)
+    public function create($grupoUsuario)
     {
         try {
-            // Preparar a consulta SQL
-            $sql = "INSERT INTO grupousuario( nome , descricao, usuarioatualizacao, Ativo, dataCriacao , dataAtualizacao)
-                    VALUES(:nome, :descricao,:usuarioatualizacao,:ativo, current_timestamp(), current_timestamp())";
+            $sql = "INSERT INTO GrupoUsuario (Nome, Descricao, DataCriacao, DataAtualizacao, UsuarioAtualizacao, Ativo)
+                    VALUES (:nome, :descricao, :dataCriacao, :dataAtualizacao, :usuarioAtualizacao, :ativo)";
 
-            // Preparar a instrução
             $stmt = $this->db->prepare($sql);
 
-            // Bind parameters by reference
-            $nomeGrupo = $grupo->getNome();
-            $descricao = $grupo->getDescricao();
-            $dataCriacao = $grupo->getDataCriacao();
-            $dataAtualizacao = $grupo->getDataAtulizacao();
-            $usuarioAtualizacao = $grupo->getUsuarioAtualizacao();
-            $ativo = $grupo->getAtivo();
+            $nome = $grupoUsuario->getNome();
+            $descricao = $grupoUsuario->getDescricao();
+            $dataCriacao = $grupoUsuario->getDataCriacao();
+            $dataAtualizacao = $grupoUsuario->getDataAtulizacao();
+            $usuarioAtualizacao = null;
+            $ativo = $grupoUsuario->getAtivo();
 
-            $stmt->bindParam(':nome', $nomeGrupo);
+            $stmt->bindParam(':nome', $nome);
             $stmt->bindParam(':descricao', $descricao);
             $stmt->bindParam(':dataCriacao', $dataCriacao);
             $stmt->bindParam(':dataAtualizacao', $dataAtualizacao);
             $stmt->bindParam(':usuarioAtualizacao', $usuarioAtualizacao);
             $stmt->bindParam(':ativo', $ativo);
 
-            // Executar a instrução
-            $stmt->execute();
-
-            // Retornar verdadeiro se a inserção for bem sucedida
-            return true;
+            return $stmt->execute();
         } catch (PDOException $e) {
             // TO-DO: implementar log
             return false;

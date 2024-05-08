@@ -16,7 +16,7 @@ class GrupoUsuario{
         $this->descricao = $descricao;
         $this->dataCriacao = $dataCriacao;
         $this->dataAtualizacao = $dataAtualizacao;
-        $this->usuarioAtualizacao = $usuarioAtualizacao;
+        $this->usuarioAtualizacao = null;
         $this->ativo = $ativo;
 
     }
