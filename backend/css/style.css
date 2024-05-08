@@ -1,0 +1,21 @@
+.footer{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #8b58eb;
+    padding: 20px;
+}
+#footer ul{
+    list-style: none;
+    padding: 0;
+}
+
+#footer li{
+    display: inline;
+    margin-right: 10px;
+}
+
+#footer ul li a{
+    text-decoration: none;
+    color: black;
+}
