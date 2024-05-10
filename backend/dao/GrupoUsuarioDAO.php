@@ -146,4 +146,33 @@ class GrupoDAO implements BaseDAO
             return false;
         }
     }
+
+    public function getGrupoByPermissaoId($permissaoId){
+        try{
+            $sql =  "SELECT GrupoUsuario.* FROM GrupoUsuario
+                    INNER JOIN PermissaoGrupo ON GrupoUsuario.Id = PermissaoGrupo.GrupoUsuarioId
+                    WHERE PermissaoGrupo.PermissaoId = :permissaoId";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':permissaoId', $permissaoId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $grupos = [];
+
+            while($row = $stmt->fetc(PDO::FETCH_ASSOC)){
+                $grupos = New GrupoUsuario(
+                    $row['id'],
+                    $row['nome'],
+                    $row['descricao'],
+                    $row['ativo'],
+                    $row['dataCriacao'],
+                    $row['dataAtualizacao']
+                );
+            }
+            return $grupos;
+        } catch(PDOException $e){
+            return[];
+
+        }
+    }
 }

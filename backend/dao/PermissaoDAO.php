@@ -15,6 +15,7 @@ class PermissaoDAO implements BaseDAO {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result) {
                 return new Permissao(
+                    $result['id'],
                     $result['Nome'],
                     $result['Descricao'],
                     $result['DataCriacao'],
@@ -37,6 +38,7 @@ class PermissaoDAO implements BaseDAO {
             $permissions = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $permissions[] = new Permissao(
+                    $row['id'],
                     $row['Nome'],
                     $row['Descricao'],
                     $row['DataCriacao'],
@@ -121,6 +123,36 @@ class PermissaoDAO implements BaseDAO {
             return false;
         }
     }    
+
+    public function getPermissaoByGrupoUsuarioId($permissaoId){
+        try{
+            $sql =  "SELECT permissao.* FROM permissao
+            inner join permissaogrupo on permissao.id = permissaogrupo.permissaoID
+            where permissao.ID = :permissaoId";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':permissaoId', $permissaoId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $grupoPermissao = [];
+
+            while($row = $stmt->fetc(PDO::FETCH_ASSOC)){
+                $grupoPermissao = New Permissao(
+                    $row['id'],
+                    $row['nome'],
+                    $row['descricao'],
+                    $row['dataCriacao'],
+                    $row['dataAtualizacao'],
+                    $row['usuarioAtualizacao'],
+                    $row['ativo']
+                );
+            }
+            return $grupoPermissao;
+        } catch(PDOException $e){
+            return[];
+
+        }
+    }
 }
 
 ?>

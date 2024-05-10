@@ -1,6 +1,7 @@
 <?php
 
 class Permissao {
+    private $id;
     private $nome;
     private $descricao;
     private $dataCriacao;
@@ -9,12 +10,13 @@ class Permissao {
     private $ativo;
 
     // Constructor
-    public function __construct($nome, $descricao, $dataCriacao, $dataAtualizacao, $usuarioAtualizacao, $ativo) {
+    public function __construct($id, $nome, $descricao, $dataCriacao, $dataAtualizacao, $usuarioAtualizacao, $ativo) {
+        $this->id = $id;
         $this->nome = $nome;
         $this->descricao = $descricao;
         $this->dataCriacao = $dataCriacao;
         $this->dataAtualizacao = $dataAtualizacao;
-        $this->usuarioAtualizacao = $usuarioAtualizacao;
+        $this->usuarioAtualizacao = null;
         $this->ativo = $ativo;
     }
 
