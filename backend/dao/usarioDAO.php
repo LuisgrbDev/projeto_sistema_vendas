@@ -78,8 +78,8 @@ class UsuarioDAO implements BaseDAO {
     public function create($usuario) {
         try {
             // Preparar a consulta SQL
-            $sql = "INSERT INTO Usuario( NomeUsuario , Senha , Email , GrupoUsuarioID , Ativo , DataCriacao , DataAtualizacao , UsuarioAtualizacao )
-                    VALUES(:nomeUsuario, :senha, :email, :grupoUsuarioID, :ativo, current_timestamp(),current_timestamp(),null)";
+            $sql = "INSERT INTO Usuario( NomeUsuario , Senha , Email , GrupoUsuarioID , Ativo , DataCriacao , DataAtualizacao , UsuarioAtualizacao, Token)
+                    VALUES(:nomeUsuario, :senha, :email, :grupoUsuarioID, :ativo, current_timestamp(),current_timestamp(),null, :token)";
 
             // Preparar a instrução
             $stmt = $this->db->prepare($sql);
@@ -90,12 +90,14 @@ class UsuarioDAO implements BaseDAO {
             $email = $usuario->getEmail();
             $grupoUsuarioID = $usuario->getGrupoUsuarioId();
             $ativo = $usuario->getAtivo();
+            $token = $usuario->generateToken();
 
             $stmt->bindParam(':nomeUsuario', $nomeUsuario);
             $stmt->bindParam(':senha', $senha);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':grupoUsuarioID', $grupoUsuarioID);
             $stmt->bindParam(':ativo', $ativo);
+            $stmt->bindParam(':token', $token);
             
             // Executar a instrução
             $stmt->execute();
@@ -126,16 +128,15 @@ class UsuarioDAO implements BaseDAO {
             $nome = $usuario->getNomeUsuario();
             $senha = $usuario->getSenha();
             $email = $usuario->getEmail();
-            $grupoUsuarioID = $usuario->getGrupoUsuarioId();
+            $grupoUsuarioId = $usuario->getGrupoUsuarioId();
             $ativo = $usuario->getAtivo();
 
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':nomeUsuario', $nome);
             $stmt->bindParam(':senha', $senha);
             $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':grupoUsuarioID', $grupoUsuarioID);
+            $stmt->bindParam(':grupoUsuarioID', $grupoUsuarioId);
             $stmt->bindParam(':ativo', $ativo);
-            
 
             $stmt->execute();
 
@@ -151,7 +152,6 @@ class UsuarioDAO implements BaseDAO {
         try {
             $sql = "DELETE FROM Usuario WHERE Id = :id";
             $stmt = $this->db->prepare($sql);
-            
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 
